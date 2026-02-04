@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Arcade Cyber Edition</title>
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-pink: #ff0055;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { box-sizing: border-box; touch-action: none; -webkit-user-select: none; }
+        
+        body {
+            margin: 0; background: #05050a; color: #fff;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            overflow: hidden; height: 100vh;
+            background-image: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #05050a 100%);
+        }
+
+        /* القائمة الرئيسية الاحترافية */
+        .menu-wrapper {
+            position: fixed; inset: 0; z-index: 100;
+            display: flex; flex-direction: column; align-items: center;
+            padding: 50px 20px;
+        }
+
+        .title-glitch {
+            font-size: 3rem; font-weight: 900; color: #fff;
+            text-transform: uppercase; margin-bottom: 40px;
+            text-shadow: 2px 2px var(--neon-pink), -2px -2px var(--neon-cyan);
+            letter-spacing: 3px;
+        }
+
+        .game-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+            width: 100%; max-width: 420px;
+        }
+
+        .premium-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 30px; padding: 30px 15px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+        }
+
+        .premium-card:active {
+            transform: scale(0.9);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px var(--neon-cyan);
+        }
+
+        .premium-card i {
+            font-size: 50px; display: block; margin-bottom: 15px;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+        }
+
+        .premium-card b {
+            font-size: 1.2rem; font-weight: 600; letter-spacing: 1px;
+            background: linear-gradient(to bottom, #fff, #999);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        /* واجهة اللعب - HUD */
+        #hud {
+            position: fixed; top: 0; width: 100%; padding: 25px;
+            display: none; justify-content: space-between; align-items: center;
+            z-index: 50;
+        }
+
+        .glass-btn {
+            background: var(--glass); border: 1px solid var(--border);
+            color: #fff; width: 50px; height: 50px; border-radius: 15px;
+            backdrop-filter: blur(10px); font-weight: bold;
+        }
+
+        .score-display {
+            background: rgba(0,0,0,0.3); padding: 8px 20px;
+            border-radius: 50px; border: 1px solid var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+            font-weight: 800; color: var(--neon-cyan); font-size: 1.2rem;
+        }
+
+        /* أزرار التحكم - Mobile Controls */
+        #controls {
+            position: fixed; bottom: 50px; width: 100%;
+            display: none; justify-content: space-between; padding: 0 35px; z-index: 50;
+        }
+
+        .control-hex {
+            width: 85px; height: 85px; background: var(--glass);
+            border: 2px solid var(--border); border-radius: 25px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; backdrop-filter: blur(10px);
+        }
+
+        .control-hex:active {
+            background: var(--neon-cyan); border-color: var(--neon-cyan); color: #000;
+        }
+
+        .fire-pulse {
+            background: var(--neon-pink) !important; border: none !important;
+            width: 95px; height: 95px; box-shadow: 0 0 30px var(--neon-pink);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(255, 0, 85, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0); }
+        }
+
+        canvas { display: block; filter: saturate(1.2); }
+
+        /* شاشة النهاية */
+        .death-overlay {
+            position: fixed; inset: 0; z-index: 200;
+            background: rgba(5, 5, 10, 0.95); backdrop-filter: blur(20px);
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="main-menu" class="menu-wrapper">
+        <div class="title-glitch">ARCADE</div>
+        <div class="game-grid">
+            <div class="premium-card" onclick="init(1)"><i>⚽</i><b>SOCCER</b></div>
+            <div class="premium-card" onclick="init(2)"><i>👹</i><b>SLAYER</b></div>
+            <div class="premium-card" onclick="init(3)"><i>🏎️</i><b>DRIFT</b></div>
+            <div class="premium-card" onclick="init(4)"><i>🛸</i><b>INVADE</b></div>
+        </div>
+    </div>
+
+    <div id="hud">
+        <button class="glass-btn" onclick="location.reload()">✕</button>
+        <div class="score-display">PTS: <span id="score-val">0</span></div>
+    </div>
+
+    <div id="controls">
+        <div style="display:flex; gap:20px;">
+            <div class="control-hex" id="l">◀</div>
+            <div class="control-hex" id="r">▶</div>
+        </div>
+        <div class="control-hex fire-pulse" id="f">🔥</div>
+    </div>
+
+    <div id="game-over" class="death-overlay">
+        <h1 style="color:var(--neon-pink); font-size: 3rem;">CRASHED</h1>
+        <p style="font-size: 1.5rem; margin-bottom: 30px;">SCORE: <span id="final-pts" style="color:var(--neon-cyan)">0</span></p>
+        <button class="premium-card" style="width:200px;" onclick="init(current)"><b>RETRY</b></button>
+        <button class="premium-card" style="width:200px; margin-top:10px; background:none;" onclick="location.reload()"><b>MENU</b></button>
+    </div>
+
+    <canvas id="c"></canvas>
+
+    <script>
+        const canvas = document.getElementById('c');
+        const ctx = canvas.getContext('2d');
+        let w, h, current, score = 0, active = false, frame = 0;
+        let player = {x:0, y:0, w:60, h:20}, objs = [], shots = [];
+        let left = false, right = false;
+
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+            player.x = w/2-30; player.y = h-200;
+        }
+        window.onresize = resize; resize();
+
+        function init(id) {
+            current = id; score = 0; active = true; frame = 0;
+            objs = []; shots = [];
+            document.getElementById('main-menu').style.display = 'none';
+            document.getElementById('game-over').style.display = 'none';
+            document.getElementById('hud').style.display = 'flex';
+            document.getElementById('controls').style.display = 'flex';
+            if(id === 1) objs.push({x: w/2, y: h/2, vx: 3, vy: 3});
+            loop();
+        }
+
+        const btn = (id, fn) => {
+            const el = document.getElementById(id);
+            el.ontouchstart = (e) => { e.preventDefault(); fn(true); };
+            el.ontouchend = (e) => { e.preventDefault(); fn(false); };
+        };
+        btn('l', v => left = v); btn('r', v => right = v);
+        document.getElementById('f').ontouchstart = (e) => {
+            e.preventDefault();
+            if(!active) return;
+            if(current === 1) { let b = objs[0]; if(Math.hypot(player.x+30-b.x, player.y-b.y) < 100) b.vy = -9; }
+            else shots.push({x: player.x+30, y: player.y});
+        };
+
+        function loop() {
+            if(!active) return;
+            frame++;
+            ctx.fillStyle = '#05050a'; ctx.fillRect(0,0,w,h);
+            
+            if(left && player.x > 0) player.x -= 8;
+            if(right && player.x < w-60) player.x += 8;
+
+            // Player Render
+            ctx.fillStyle = varColor(frame);
+            ctx.shadowBlur = 15; ctx.shadowColor = varColor(frame);
+            ctx.fillRect(player.x, player.y, 60, 20);
+            ctx.shadowBlur = 0;
+
+            // Game Logic
+            if(current === 1) { // Soccer
+                let b = objs[0]; b.x += b.vx; b.y += b.vy;
+                if(b.x<15 || b.x>w-15) b.vx *= -1;
+                if(b.y<60) { score+=10; b.y=h/2; b.vy=3.5; }
+                if(b.y>h) { score=Math.max(0, score-5); b.y=h/2; }
+                ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(b.x, b.y, 15, 0, Math.PI*2); ctx.fill();
+            }
+
+            if(current === 2) { // Slayer
+                if(frame % 100 === 0) objs.push({x: Math.random()*(w-50), y: 120, vx: 2.5});
+                objs.forEach((m, i) => {
+                    m.x += m.vx; if(m.x<10 || m.x>w-50) m.vx *= -1;
+                    ctx.fillStyle = '#ff0055'; ctx.fillRect(m.x, m.y, 45, 45);
+                    shots.forEach((s, j) => {
+                        if(s.x > m.x && s.x < m.x+45 && s.y < m.y+45) { objs.splice(i,1); shots.splice(j,1); score+=20; }
+                    });
+                });
+            }
+
+            if(current === 3) { // Drift
+                if(frame % 45 === 0) objs.push({x: Math.random()*(w-40), y: -100});
+                objs.forEach((c, i) => {
+                    c.y += 9; ctx.fillStyle = varColor(c.y); ctx.fillRect(c.x, c.y, 35, 75);
+                    if(c.y > h) { objs.splice(i,1); score+=10; }
+                    if(player.x < c.x+35 && player.x+60 > c.x && player.y < c.y+75 && player.y+20 > c.y) die();
+                });
+            }
+
+            if(current === 4) { // Invade
+                if(frame % 70 === 0) objs.push({x: Math.random()*(w-40), y: -40});
+                objs.forEach((u, i) => {
+                    u.y += 4.5; ctx.fillStyle = '#fff'; ctx.fillRect(u.x, u.y, 40, 20);
+                    shots.forEach((s, j) => {
+                        if(s.x > u.x && s.x < u.x+40 && s.y < u.y+20) { objs.splice(i,1); shots.splice(j,1); score+=25; }
+                    });
+                    if(u.y > h) die();
+                });
+            }
+
+            shots.forEach((s, i) => {
+                s.y -= 12; ctx.fillStyle = varColor(s.y); ctx.fillRect(s.x-2, s.y, 4, 15);
+                if(s.y < 0) shots.splice(i,1);
+            });
+
+            document.getElementById('score-val').innerText = score;
+            requestAnimationFrame(loop);
+        }
+
+        function die() {
+            active = false;
+            document.getElementById('game-over').style.display = 'flex';
+            document.getElementById('final-pts').innerText = score;
+            document.getElementById('hud').style.display = 'none';
+            document.getElementById('controls').style.display = 'none';
+        }
+
+        function varColor(f) { return `hsl(${f % 360}, 100%, 65%)`; }
+    </script>
+</body>
+</html>
