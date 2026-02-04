@@ -3,173 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>علي محمد محمود | Cyber OS</title>
+    <title>علي محمد محمود | Cyber OS V2</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@500;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #00f3ff;
             --secondary: #ff0055;
-            --bg-dark: #08090d;
-            --card-bg: rgba(20, 22, 32, 0.9);
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.1);
+            --bg-dark: #050508;
+            --card-bg: rgba(15, 15, 25, 0.95);
+            --border: rgba(0, 243, 255, 0.2);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
         
         body {
             margin: 0; background: var(--bg-dark); color: #fff;
-            font-family: 'Cairo', sans-serif; overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 243, 255, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(255, 0, 85, 0.05) 0%, transparent 20%);
-            min-height: 100vh;
+            font-family: 'Cairo', sans-serif; overflow: hidden; height: 100vh;
         }
 
-        /* القائمة الجانبية (Navigation) */
+        /* نظام التنقل */
         nav {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: var(--card-bg); backdrop-filter: blur(15px);
-            padding: 10px 25px; border-radius: 50px; border: 1px solid var(--border);
-            display: flex; gap: 20px; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
+            background: rgba(20, 20, 35, 0.8); backdrop-filter: blur(20px);
+            padding: 12px 30px; border-radius: 40px; border: 1px solid var(--border);
+            display: flex; gap: 25px; z-index: 1000; box-shadow: 0 0 30px rgba(0,0,0,0.8);
         }
 
-        nav a {
-            color: #888; text-decoration: none; font-weight: bold; font-size: 0.9rem;
-            transition: 0.3s; padding: 5px 15px; border-radius: 20px;
+        nav a { color: #666; text-decoration: none; font-weight: bold; transition: 0.3s; padding: 5px 15px; }
+        nav a.active { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
+
+        .page { display: none; height: 100vh; padding: 20px; animation: fadeIn 0.4s ease; overflow-y: auto; }
+        .page.active { display: flex; flex-direction: column; align-items: center; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* الحاسبة الاحترافية */
+        .calc-box {
+            background: #10101a; padding: 25px; border-radius: 35px;
+            border: 2px solid var(--border); width: 100%; max-width: 340px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
         }
 
-        nav a.active { color: var(--primary); background: rgba(0, 243, 255, 0.1); }
-
-        /* الأقسام (Sections) */
-        .page { display: none; padding: 40px 20px 120px; animation: fadeIn 0.5s ease; }
-        .page.active { display: block; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* العنوان الرئيسي */
-        .glitch-title {
-            text-align: center; font-family: 'Orbitron', sans-serif; font-weight: 900;
-            font-size: 2.5rem; margin-bottom: 5px; color: var(--primary);
-            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
-        }
-
-        .subtitle { text-align: center; color: #666; margin-bottom: 40px; }
-
-        /* بطاقات المشاريع */
-        .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto; }
-        .card {
-            background: var(--card-bg); border: 1px solid var(--border);
-            border-radius: 20px; padding: 25px; transition: 0.3s;
-            position: relative; overflow: hidden;
-        }
-        .card:hover { border-color: var(--primary); transform: translateY(-5px); }
-
-        /* الآلة الحاسبة المطورة */
-        .calc-wrapper {
-            max-width: 320px; margin: 0 auto; background: #111; border-radius: 30px;
-            padding: 20px; border: 1px solid var(--border); box-shadow: 0 20px 50px #000;
-        }
         .calc-screen {
-            background: #000; height: 80px; border-radius: 15px; margin-bottom: 20px;
-            display: flex; align-items: flex-end; justify-content: flex-end; padding: 15px;
-            font-family: 'Orbitron', sans-serif; color: var(--primary); font-size: 1.8rem;
+            background: #000; height: 100px; border-radius: 20px;
+            margin-bottom: 20px; padding: 20px; text-align: left;
+            display: flex; flex-direction: column; justify-content: center;
         }
-        .calc-btns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+
+        #calc-display { 
+            font-family: 'Orbitron', sans-serif; color: var(--primary); 
+            font-size: 1.8rem; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        .calc-btns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
         .btn {
-            background: #1a1c25; border: none; height: 55px; border-radius: 12px;
-            color: #fff; font-size: 1.1rem; cursor: pointer; transition: 0.2s;
+            height: 60px; border-radius: 15px; border: none; background: #1a1a2e;
+            color: #fff; font-size: 1.2rem; cursor: pointer; transition: 0.2s;
         }
-        .btn:active { transform: scale(0.9); background: var(--primary); color: #000; }
-        .btn.op { color: var(--secondary); }
+        .btn:active { background: var(--primary); color: #000; }
+        .btn.op { color: var(--secondary); background: rgba(255, 0, 85, 0.05); }
 
-        /* منطقة الألعاب */
-        .arcade-container {
-            max-width: 500px; margin: 0 auto; position: relative;
-            background: #000; border-radius: 20px; overflow: hidden;
-            aspect-ratio: 3/4; border: 2px solid var(--primary);
+        /* منطقة الألعاب المطورة */
+        .arcade-wrapper {
+            width: 100%; max-width: 450px; background: #000;
+            border-radius: 30px; border: 2px solid var(--primary);
+            position: relative; aspect-ratio: 9/16; overflow: hidden;
         }
-        canvas { width: 100%; height: 100%; }
 
-        .game-menu { position: absolute; inset: 0; background: rgba(8,9,13,0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; }
-        .game-btn { background: var(--glass); border: 1px solid var(--primary); color: #fff; padding: 15px 30px; border-radius: 10px; margin: 5px; width: 200px; cursor: pointer; }
+        canvas { width: 100%; height: 100%; display: block; }
 
-        .controls-mobile {
-            display: flex; justify-content: space-between; padding: 20px;
-            background: #111; border-top: 1px solid var(--border);
+        .overlay {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.9);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100;
         }
-        .joy-btn { width: 60px; height: 60px; background: #222; border-radius: 50%; border: none; color: #fff; font-size: 1.5rem; }
-        .fire-btn { width: 70px; height: 70px; background: var(--secondary); border-radius: 50%; border: none; box-shadow: 0 0 20px var(--secondary); }
 
+        .game-btn {
+            background: none; border: 1px solid var(--primary); color: #fff;
+            padding: 15px 40px; border-radius: 50px; margin: 10px; cursor: pointer;
+            width: 220px; font-family: 'Orbitron'; transition: 0.3s;
+        }
+
+        .game-btn:hover { background: var(--primary); color: #000; }
+
+        /* تحكم الهاتف */
+        .mobile-controls {
+            position: absolute; bottom: 20px; width: 100%;
+            display: none; justify-content: space-between; padding: 0 30px;
+        }
+
+        .joy-btn {
+            width: 70px; height: 70px; background: rgba(255,255,255,0.05);
+            border: 2px solid var(--border); border-radius: 50%;
+            color: #fff; font-size: 1.5rem; display: flex; align-items: center; justify-content: center;
+        }
+
+        .fire-btn {
+            width: 85px; height: 85px; background: var(--secondary);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 20px var(--secondary);
+        }
     </style>
 </head>
 <body>
 
     <nav>
-        <a href="#" onclick="showPage('home')" id="link-home" class="active">أنا</a>
-        <a href="#" onclick="showPage('projects')" id="link-projects">مشاريعي</a>
-        <a href="#" onclick="showPage('calc')" id="link-calc">أدوات</a>
-        <a href="#" onclick="showPage('game')" id="link-game">ألعاب</a>
+        <a href="#" onclick="showPage('home')" id="l-home" class="active">أنا</a>
+        <a href="#" onclick="showPage('calc')" id="l-calc">حاسبة</a>
+        <a href="#" onclick="showPage('game')" id="l-game">أركيد</a>
     </nav>
 
     <section id="home" class="page active">
-        <div class="glitch-title">ALI MOHAMED</div>
-        <p class="subtitle">مبرمج مواقع مبتدئ & مصمم واجهات تفاعلية</p>
-        
-        <div class="card" style="max-width: 600px; margin: 0 auto;">
-            <h3>عني</h3>
-            <p>أهلاً بك في عالمي الرقمي. أنا مبرمج أسعى لتحويل الأفكار إلى واقع باستخدام الأكواد. أهتم جداً بتطوير الواجهات التي تجمع بين البساطة والقوة.</p>
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <span style="background: rgba(0, 243, 255, 0.1); color: var(--primary); padding: 5px 12px; border-radius: 15px; font-size: 0.8rem;">HTML5</span>
-                <span style="background: rgba(255, 0, 85, 0.1); color: var(--secondary); padding: 5px 12px; border-radius: 15px; font-size: 0.8rem;">CSS3</span>
-                <span style="background: rgba(255, 255, 255, 0.1); color: #fff; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem;">JavaScript</span>
-            </div>
-        </div>
-    </section>
-
-    <section id="projects" class="page">
-        <h2 class="glitch-title">WORKS</h2>
-        <div class="project-grid">
-            <div class="card">
-                <h3>Cyber Calculator</h3>
-                <p>آلة حاسبة متطورة بتصميم نيون عصري.</p>
-            </div>
-            <div class="card">
-                <h3>Arcade Hub</h3>
-                <p>مجموعة ألعاب كلاسيكية بلغة الجافاسكريبت.</p>
-            </div>
-            <div class="card">
-                <h3>Portfolio OS</h3>
-                <p>موقع شخصي يحاكي أنظمة التشغيل المستقبلية.</p>
-            </div>
+        <h1 style="font-family:'Orbitron'; color: var(--primary); margin-top: 50px;">ALI MOHAMED</h1>
+        <p style="color: #666;">مبرمج مواقع مبتدئ | واجهة Cyber OS V2</p>
+        <div style="background: var(--card-bg); padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-top: 20px; max-width: 400px; text-align: center;">
+            <h3>أهلاً بك</h3>
+            <p>هذا الموقع هو عرض لمهاراتي في JavaScript وتصميم الواجهات التفاعلية للهاتف والكمبيوتر.</p>
         </div>
     </section>
 
     <section id="calc" class="page">
-        <h2 class="glitch-title">CALCULATOR</h2>
-        <div class="calc-wrapper">
-            <div class="calc-screen" id="calc-display">0</div>
+        <h2 style="font-family:'Orbitron'; color: var(--secondary);">CALCULATOR</h2>
+        <div class="calc-box">
+            <div class="calc-screen">
+                <div id="calc-display">0</div>
+            </div>
             <div class="calc-btns">
-                <button class="btn op" onclick="cClear()">C</button>
+                <button class="btn op" onclick="cClear()">AC</button>
                 <button class="btn op" onclick="cDel()">DEL</button>
                 <button class="btn op" onclick="cIn('%')">%</button>
                 <button class="btn op" onclick="cIn('/')">÷</button>
-                
                 <button class="btn" onclick="cIn('7')">7</button>
                 <button class="btn" onclick="cIn('8')">8</button>
                 <button class="btn" onclick="cIn('9')">9</button>
                 <button class="btn op" onclick="cIn('*')">×</button>
-                
                 <button class="btn" onclick="cIn('4')">4</button>
                 <button class="btn" onclick="cIn('5')">5</button>
                 <button class="btn" onclick="cIn('6')">6</button>
                 <button class="btn op" onclick="cIn('-')">-</button>
-                
                 <button class="btn" onclick="cIn('1')">1</button>
                 <button class="btn" onclick="cIn('2')">2</button>
                 <button class="btn" onclick="cIn('3')">3</button>
                 <button class="btn op" onclick="cIn('+')">+</button>
-                
                 <button class="btn" style="grid-column: span 2;" onclick="cIn('0')">0</button>
                 <button class="btn" onclick="cIn('.')">.</button>
                 <button class="btn" style="background: var(--primary); color: #000;" onclick="cRes()">=</button>
@@ -178,113 +152,170 @@
     </section>
 
     <section id="game" class="page">
-        <div class="arcade-container">
-            <div id="g-menu" class="game-menu">
-                <h1 style="color: var(--primary); font-family: 'Orbitron';">ARCADE</h1>
-                <button class="game-btn" onclick="gInit(1)">⚽ SOCCER</button>
-                <button class="game-btn" onclick="gInit(2)">👹 SLAYER</button>
-                <button class="game-btn" onclick="gInit(3)">🏎️ DRIFT</button>
-                <button class="game-btn" onclick="gInit(4)">🛸 INVADE</button>
+        <div class="arcade-wrapper">
+            <div id="menu" class="overlay">
+                <h1 style="font-family:'Orbitron'; color: var(--primary);">CYBER ARCADE</h1>
+                <button class="game-btn" onclick="gStart(1)">⚽ SOCCER</button>
+                <button class="game-btn" onclick="gStart(3)">🏎️ DRIFT</button>
+                <button class="game-btn" onclick="gStart(4)">🛸 INVADE</button>
+                <p style="font-size: 0.8rem; color: #444; margin-top: 20px;">الأسهم للتحرك | Space للإطلاق</p>
             </div>
-            <div id="g-over" class="game-menu" style="display: none;">
-                <h2 style="color: var(--secondary);">CRASHED</h2>
-                <button class="game-btn" onclick="gInit(current)">RETRY</button>
-                <button class="game-btn" onclick="location.reload()">MENU</button>
+
+            <div id="over" class="overlay" style="display: none;">
+                <h2 style="color: var(--secondary);">GAMEOVER</h2>
+                <h1 id="f-score" style="font-family: 'Orbitron';">0</h1>
+                <button class="game-btn" onclick="gStart(current)">RETRY</button>
+                <button class="game-btn" onclick="resetUI()">MENU</button>
             </div>
+
             <canvas id="canvas"></canvas>
-            
-            <div class="controls-mobile" id="g-ctrl" style="display: none;">
-                <div style="display: flex; gap: 10px;">
-                    <button class="joy-btn" id="btn-l">◀</button>
-                    <button class="joy-btn" id="btn-r">▶</button>
+
+            <div id="controls" class="mobile-controls">
+                <div style="display: flex; gap: 15px;">
+                    <div class="joy-btn" id="m-left">◀</div>
+                    <div class="joy-btn" id="m-right">▶</div>
                 </div>
-                <button class="fire-btn" id="btn-f">🔥</button>
+                <div class="fire-btn" id="m-fire">🔥</div>
             </div>
         </div>
     </section>
 
     <script>
-        // نظام التنقل
+        // --- إدارة الصفحات ---
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.getElementById('link-'+id).classList.add('active');
-            if(id !== 'game') active = false; // توقف اللعبة عند الخروج
+            document.getElementById('l-'+id).classList.add('active');
+            gameActive = false;
         }
 
-        // الآلة الحاسبة
-        let cDisp = document.getElementById('calc-display');
-        function cIn(v) { if(cDisp.innerText === '0') cDisp.innerText = v; else cDisp.innerText += v; }
-        function cClear() { cDisp.innerText = '0'; }
-        function cDel() { cDisp.innerText = cDisp.innerText.slice(0, -1) || '0'; }
-        function cRes() { try { cDisp.innerText = eval(cDisp.innerText.replace('÷','/').replace('×','*')); } catch { cDisp.innerText = 'Error'; } }
+        // --- منطق الحاسبة (مع ميزة الأرقام الطويلة) ---
+        const display = document.getElementById('calc-display');
+        function cIn(v) { 
+            if(display.innerText === '0') display.innerText = v; 
+            else display.innerText += v; 
+        }
+        function cClear() { display.innerText = '0'; }
+        function cDel() { display.innerText = display.innerText.slice(0, -1) || '0'; }
+        
+        function cRes() {
+            try {
+                let result = eval(display.innerText.replace('÷','/').replace('×','*'));
+                // اختصار الأرقام الطويلة جداً باستخدام الترميز العلمي
+                if(result.toString().length > 10) {
+                    display.innerText = result.toExponential(4);
+                } else {
+                    display.innerText = result;
+                }
+            } catch { display.innerText = 'Error'; }
+        }
 
-        // محرك الألعاب (مدمج ومعدل)
+        // --- محرك الألعاب المتطور ---
         const cvs = document.getElementById('canvas');
         const ctx = cvs.getContext('2d');
-        let w, h, current, score = 0, active = false, frame = 0;
+        let w, h, current, score = 0, gameActive = false, frame = 0;
         let player = {x:0, y:0}, objs = [], shots = [];
         let left = false, right = false;
 
-        function resize() {
+        function gStart(id) {
             w = cvs.width = cvs.offsetWidth;
             h = cvs.height = cvs.offsetHeight;
+            current = id; score = 0; gameActive = true; frame = 0; objs = []; shots = [];
             player = {x: w/2-30, y: h-120};
-        }
-
-        function gInit(id) {
-            resize(); current = id; score = 0; active = true; frame = 0; objs = []; shots = [];
-            document.getElementById('g-menu').style.display = 'none';
-            document.getElementById('g-over').style.display = 'none';
-            document.getElementById('g-ctrl').style.display = 'flex';
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('over').style.display = 'none';
+            if('ontouchstart' in window) document.getElementById('controls').style.display = 'flex';
             if(id === 1) objs.push({x: w/2, y: h/2, vx: 3, vy: 3});
-            gLoop();
+            loop();
         }
 
-        // تحكم اللعبة
-        const setup = (id, fn) => {
-            const el = document.getElementById(id);
-            const start = (e) => { e.preventDefault(); fn(true); };
-            const end = (e) => { e.preventDefault(); fn(false); };
-            el.addEventListener('touchstart', start); el.addEventListener('touchend', end);
-            el.addEventListener('mousedown', start); el.addEventListener('mouseup', end);
-        };
-        setup('btn-l', v => left = v); setup('btn-r', v => right = v);
-        document.getElementById('btn-f').addEventListener('mousedown', () => {
-            if(current === 1) { if(Math.hypot(player.x+30-objs[0].x, player.y-objs[0].y) < 80) objs[0].vy = -8; }
-            else shots.push({x: player.x+30, y: player.y});
+        // تحكم الكمبيوتر (لوحة المفاتيح)
+        window.addEventListener('keydown', e => {
+            if(e.key === 'ArrowLeft') left = true;
+            if(e.key === 'ArrowRight') right = true;
+            if(e.key === ' ') fire();
+        });
+        window.addEventListener('keyup', e => {
+            if(e.key === 'ArrowLeft') left = false;
+            if(e.key === 'ArrowRight') right = false;
         });
 
-        function gLoop() {
-            if(!active) return;
-            frame++;
-            ctx.fillStyle = '#08090d'; ctx.fillRect(0,0,w,h);
-            
-            if(left && player.x > 0) player.x -= 6;
-            if(right && player.x < w-60) player.x += 6;
+        // تحكم الهاتف (لمس)
+        const bind = (id, fn) => {
+            const el = document.getElementById(id);
+            el.ontouchstart = (e) => { e.preventDefault(); fn(true); };
+            el.ontouchend = (e) => { e.preventDefault(); fn(false); };
+        };
+        bind('m-left', v => left = v);
+        bind('m-right', v => right = v);
+        document.getElementById('m-fire').ontouchstart = (e) => { e.preventDefault(); fire(); };
 
-            ctx.fillStyle = varColor(frame);
-            ctx.fillRect(player.x, player.y, 60, 15);
-
-            // منطق مبسط للألعاب
-            if(current === 3) { // Drift
-                if(frame % 40 === 0) objs.push({x: Math.random()*(w-40), y: -50});
-                objs.forEach((o, i) => {
-                    o.y += 7; ctx.fillStyle = varColor(o.y); ctx.fillRect(o.x, o.y, 30, 50);
-                    if(o.y > h) { objs.splice(i,1); score++; }
-                    if(player.x < o.x+30 && player.x+60 > o.x && player.y < o.y+50) gDie();
-                });
+        function fire() {
+            if(!gameActive) return;
+            if(current === 1) { 
+                let b = objs[0]; 
+                if(Math.hypot(player.x+30-b.x, player.y-b.y) < 100) b.vy = -10; 
+            } else {
+                shots.push({x: player.x+30, y: player.y});
             }
-            
-            // (بقية منطق الألعاب مشابه للكود السابق لكن مع تحسين الأداء)
-            ctx.fillStyle = '#fff';
-            ctx.fillText("SCORE: " + score, 20, 30);
-            
-            requestAnimationFrame(gLoop);
         }
 
-        function gDie() { active = false; document.getElementById('g-over').style.display = 'flex'; }
+        function loop() {
+            if(!gameActive) return;
+            frame++;
+            ctx.fillStyle = '#050508'; ctx.fillRect(0,0,w,h);
+            
+            if(left && player.x > 0) player.x -= 7;
+            if(right && player.x < w-60) player.x += 7;
+
+            // لاعب النيون
+            ctx.fillStyle = `hsl(${frame%360}, 100%, 50%)`;
+            ctx.shadowBlur = 15; ctx.shadowColor = ctx.fillStyle;
+            ctx.fillRect(player.x, player.y, 60, 15);
+            ctx.shadowBlur = 0;
+
+            if(current === 3) { // Drift Game
+                if(frame % 40 === 0) objs.push({x: Math.random()*(w-40), y: -50});
+                objs.forEach((o, i) => {
+                    o.y += 8; ctx.fillStyle = varColor(o.y); ctx.fillRect(o.x, o.y, 30, 60);
+                    if(o.y > h) { objs.splice(i,1); score+=10; }
+                    if(player.x < o.x+30 && player.x+60 > o.x && player.y < o.y+60 && player.y+15 > o.y) die();
+                });
+            }
+
+            if(current === 4) { // Invade Game
+                if(frame % 60 === 0) objs.push({x: Math.random()*(w-50), y: -50});
+                objs.forEach((u, i) => {
+                    u.y += 4; ctx.fillStyle = '#fff'; ctx.fillRect(u.x, u.y, 45, 20);
+                    shots.forEach((s, j) => {
+                        if(s.x > u.x && s.x < u.x+45 && s.y < u.y+20) { objs.splice(i,1); shots.splice(j,1); score+=25; }
+                    });
+                    if(u.y > h) die();
+                });
+            }
+
+            shots.forEach((s, i) => {
+                s.y -= 12; ctx.fillStyle = varColor(s.y); ctx.fillRect(s.x-2, s.y, 4, 15);
+                if(s.y < 0) shots.splice(i,1);
+            });
+
+            ctx.fillStyle = '#fff'; ctx.font = '20px Orbitron'; ctx.fillText(score, 20, 40);
+            requestAnimationFrame(loop);
+        }
+
+        function die() {
+            gameActive = false;
+            document.getElementById('over').style.display = 'flex';
+            document.getElementById('f-score').innerText = score;
+            document.getElementById('controls').style.display = 'none';
+        }
+
+        function resetUI() {
+            document.getElementById('over').style.display = 'none';
+            document.getElementById('menu').style.display = 'flex';
+        }
+
         function varColor(f) { return `hsl(${f % 360}, 100%, 65%)`; }
     </script>
 </body>
